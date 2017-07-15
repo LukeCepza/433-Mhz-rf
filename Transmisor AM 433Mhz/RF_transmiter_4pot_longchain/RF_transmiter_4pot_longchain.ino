@@ -2,9 +2,9 @@
 #include <SPI.h>
 
 RH_ASK driver(2000, 9, 2, 10);
-char code[15];
+char code[11];
 int i;
-String pot[4];
+String pot[3];
 
 void setup() {
  // put your setup code here, to run once:
@@ -16,27 +16,26 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 String str = "";
-  pot[0] = String(analogRead(A0),DEC);
-  pot[1] = String(analogRead(A1),DEC);
-  pot[2] = String(analogRead(A2),DEC);
-  pot[3] = String(analogRead(A3),DEC);
+  pot[0] = String(map(analogRead(A0),0,1023,0,155),DEC);
+  pot[1] = String(map(analogRead(A1),0,1023,0,155),DEC);
+  pot[2] = String(map(analogRead(A2),0,1023,0,155),DEC);
   
-  for(i = 0; i < 4; i++){
-    if (pot[i].length() == 4){
+  for(i = 0; i < 3; i++){
+    if (pot[i].length() == 3){
       str += pot[i];
     }
     else{
-      while(pot[i].length() < 4){
+      while(pot[i].length() < 3){
       pot[i] = "0" + pot[i];
       }
       str += pot[i];
     }
   }
   Serial.println(str);
-  str.toCharArray(code, 16);
+  str.toCharArray(code, 11);
   char *msg = code;
 
   driver.send((uint8_t *)msg, strlen(msg));
   driver.waitPacketSent();
-  delay(5);
+  delay(50);
 }
